@@ -16,7 +16,11 @@ public class DoacaoRequest {
     public void setNome(String nome) { this.nome = nome; }
 
     public Integer getIdDoador() { return doadorid; }
-    public void setIdDoador(Integer idDoador) { this.doadorid = doadorid; }
+    public void setIdDoador(Integer idDoador) { this.doadorid = idDoador; }
+    
+    // Getter para o campo doadorid do JSON
+    public Integer getDoadorid() { return doadorid; }
+    public void setDoadorid(Integer doadorid) { this.doadorid = doadorid; }
 
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }

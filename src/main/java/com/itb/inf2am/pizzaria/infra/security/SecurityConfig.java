@@ -18,8 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     SecurityFilter securityFilter;
@@ -49,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/doacao/**").permitAll()
 
                         // Pedidos (liberando POST e GET explicitamente)
-                        .requestMatchers(HttpMethod.POST, "/pedido").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/pedido/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/pedido/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "pedido/**").permitAll()
                         .requestMatchers(HttpMethod.PUT,"pedido/**").permitAll()

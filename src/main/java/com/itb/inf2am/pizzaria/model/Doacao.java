@@ -1,9 +1,10 @@
 package com.itb.inf2am.pizzaria.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.springframework.http.HttpMethod;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Doacao")
@@ -40,7 +41,9 @@ public class Doacao {
     @JoinColumn(name = "doadorid", nullable = false)
     private Cliente doador;
 
-
+    @JsonBackReference
+    @OneToMany(mappedBy = "iddoacao")
+    private List<Pedido> pedidos;
 
     @Transient
     private String message = "";
@@ -108,6 +111,13 @@ public class Doacao {
         this.doador = doador;
     }
 
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
 
     public byte[] getImagem() {
         return imagem;

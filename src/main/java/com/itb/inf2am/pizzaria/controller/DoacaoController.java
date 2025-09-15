@@ -1,6 +1,7 @@
 package com.itb.inf2am.pizzaria.controller;
 
 import com.itb.inf2am.pizzaria.exceptions.BadRequest;
+import com.itb.inf2am.pizzaria.model.Cliente;
 import com.itb.inf2am.pizzaria.model.Doacao;
 import com.itb.inf2am.pizzaria.model.DoacaoRequest;
 import com.itb.inf2am.pizzaria.service.DoacaoService;
@@ -67,12 +68,53 @@ public class DoacaoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarDoacao(@RequestBody Doacao doacao) {
-        if (doacao.getEmail() == null || doacao.getEmail().isEmpty()) {
-            return ResponseEntity.badRequest().body("O campo email é obrigatório.");
+    public ResponseEntity<?> criarDoacao(@RequestBody DoacaoRequest request) {
+        try {
+            System.out.println("=== CRIANDO DOAÇÃO ===");
+            System.out.println("Request recebido: " + request);
+            System.out.println("Doadorid recebido: " + request.getDoadorid());
+            
+            // Validações básicas
+            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("O campo email é obrigatório.");
+            }
+            
+            if (request.getNome() == null || request.getNome().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("O campo nome é obrigatório.");
+            }
+
+            Doacao doacao = new Doacao();
+            doacao.setNome(request.getNome());
+            doacao.setTitulo(request.getTitulo());
+            doacao.setGenero(request.getGenero());
+            doacao.setAutor(request.getAutor());
+            doacao.setDescricao(request.getDescricao());
+            doacao.setEmail(request.getEmail());
+
+            System.out.println("Doação criada: " + doacao);
+
+            // Validar se doadorid foi fornecido
+            if (request.getDoadorid() == null) {
+                return ResponseEntity.badRequest().body("O campo doadorid é obrigatório.");
+            }
+            
+            // Buscar o doador pelo ID
+            System.out.println("Buscando doador com ID: " + request.getDoadorid());
+            Cliente doador = doacaoService.buscarClientePorId(request.getDoadorid());
+            doacao.setDoador(doador);
+            System.out.println("Doador encontrado: " + doador.getNome());
+
+            System.out.println("Salvando doação...");
+            Doacao novaDoacao = doacaoService.salvarDoacao(doacao);
+            System.out.println("Doação salva com sucesso! ID: " + novaDoacao.getId());
+            
+            return ResponseEntity.ok().body(novaDoacao);
+        } catch (Exception e) {
+            System.out.println("=== ERRO AO CRIAR DOAÇÃO ===");
+            System.out.println("Erro: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao processar doação: " + e.getMessage());
         }
-        Doacao novoDoacao = doacaoService.salvarDoacao(doacao);
-        return ResponseEntity.ok().body(novoDoacao);
     }
 
     @DeleteMapping("/{id}")

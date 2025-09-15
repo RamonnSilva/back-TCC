@@ -1,5 +1,6 @@
 package com.itb.inf2am.pizzaria.service;
 
+import com.itb.inf2am.pizzaria.model.Cliente;
 import com.itb.inf2am.pizzaria.model.Doacao;
 
 import java.util.List;
@@ -22,4 +23,7 @@ public interface DoacaoService {
     Doacao atualizarDoacao(Doacao doacao, Integer id);
 
     List<Doacao> listarDoacoesPorEmail(String email);
+    
+    // Busca um cliente por ID
+    Cliente buscarClientePorId(Integer id);
 }

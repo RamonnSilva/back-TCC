@@ -2,7 +2,9 @@ package com.itb.inf2am.pizzaria.service;
 
 import com.itb.inf2am.pizzaria.exceptions.BadRequest;
 import com.itb.inf2am.pizzaria.exceptions.NotFound;
+import com.itb.inf2am.pizzaria.model.Cliente;
 import com.itb.inf2am.pizzaria.model.Doacao;
+import com.itb.inf2am.pizzaria.repository.ClienteRepository;
 import com.itb.inf2am.pizzaria.repository.DoacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -13,17 +15,27 @@ import java.util.List;
 public class DoacaoServiceImpl implements DoacaoService {
 
     private final DoacaoRepository doacaoRepository;
+    private final ClienteRepository clienteRepository;
 
-    public DoacaoServiceImpl(DoacaoRepository doacaoRepository) {
+    public DoacaoServiceImpl(DoacaoRepository doacaoRepository, ClienteRepository clienteRepository) {
         this.doacaoRepository = doacaoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     @Override
     @Transactional
     public Doacao salvarDoacao(Doacao doacao) {
-        if (!doacao.validarDoacao()) {
-            throw new BadRequest(doacao.getMessage());
+        // Validações básicas
+        if (doacao.getNome() == null || doacao.getNome().trim().isEmpty()) {
+            throw new BadRequest("Nome é obrigatório");
         }
+        if (doacao.getTitulo() == null || doacao.getTitulo().trim().isEmpty()) {
+            throw new BadRequest("Título é obrigatório");
+        }
+        if (doacao.getEmail() == null || doacao.getEmail().trim().isEmpty()) {
+            throw new BadRequest("Email é obrigatório");
+        }
+        
         return doacaoRepository.save(doacao);
     }
 
@@ -71,5 +83,10 @@ public class DoacaoServiceImpl implements DoacaoService {
     @Override
     public List<Doacao> listarDoacoesPorEmail(String email) {
         return doacaoRepository.findByEmail(email);
+    }
+
+    public Cliente buscarClientePorId(Integer id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new NotFound("Cliente não encontrado com o id " + id));
     }
 }

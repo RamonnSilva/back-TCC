@@ -28,10 +28,21 @@ public class AppExceptionHandler  extends ResponseEntityExceptionHandler {
 
         LocalDateTime localDateTimeBrasil = LocalDateTime.now(zoneBrasil);
         String errorMessageDescription = ex.getLocalizedMessage(); // Mensagem original do erro
-        System.out.println(errorMessageDescription);              //  Mostrando a mensagem original
-        errorMessageDescription = "Ocorreu um erro interno no servidor:"; // Colocando uma mensagem genérica
+        
+        // Log detalhado do erro para debug
+        System.out.println("=== ERRO 500 DETALHADO ===");
+        System.out.println("Mensagem: " + errorMessageDescription);
+        System.out.println("Causa: " + ex.getCause());
+        System.out.println("Stack trace: ");
+        ex.printStackTrace();
+        System.out.println("==========================");
+        
+        // Se não há mensagem específica, usar genérica
+        if (errorMessageDescription == null || errorMessageDescription.trim().isEmpty()) {
+            errorMessageDescription = "Ocorreu um erro interno no servidor";
+        }
 
-        arrayMessage = errorMessageDescription.split(":");
+        arrayMessage = new String[]{errorMessageDescription};
 
         ErrorMessage errorMessage = new ErrorMessage(localDateTimeBrasil, arrayMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 

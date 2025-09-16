@@ -1,5 +1,6 @@
 package com.itb.inf2am.pizzaria.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public class Pedido {
     @Column(name = "datapedido")
     private LocalDateTime dataPedido;
 
-    @JsonManagedReference
+
     @ManyToOne
     @JoinColumn(name = "iddoacao", nullable = false)
     private Doacao iddoacao;

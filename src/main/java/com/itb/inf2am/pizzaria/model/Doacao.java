@@ -1,6 +1,7 @@
 package com.itb.inf2am.pizzaria.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -41,8 +42,8 @@ public class Doacao {
     @JoinColumn(name = "doadorid", nullable = false)
     private Cliente doador;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "iddoacao")
+    @JsonIgnore
     private List<Pedido> pedidos;
 
     @Transient

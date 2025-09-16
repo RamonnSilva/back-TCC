@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/doacao/**").permitAll()
 
                         // Pedidos (liberando POST e GET explicitamente)
+                        .requestMatchers(HttpMethod.POST, "/pedido").permitAll()
                         .requestMatchers(HttpMethod.POST, "/pedido/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/pedido/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "pedido/**").permitAll()

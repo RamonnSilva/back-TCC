@@ -1,6 +1,7 @@
 package com.itb.inf2am.pizzaria.service;
 
 import com.itb.inf2am.pizzaria.exceptions.NotFound;
+import com.itb.inf2am.pizzaria.model.Doacao;
 import com.itb.inf2am.pizzaria.model.Pedido;
 import com.itb.inf2am.pizzaria.repository.PedidoRepository;
 import jakarta.transaction.Transactional;
@@ -67,6 +68,11 @@ public class PedidoServiceImpl implements PedidoService {
         throw new NotFound("Pedido não encontrado com id " + id);
     }
 
+
+    @Override
+    public List<Pedido> listarTodosPedido() {
+        return pedidoRepository.findAll();
+    }
     @Override
     @Transactional
     public Pedido atualizarCodigoCorreios(Long id, String codigoCorreios) {

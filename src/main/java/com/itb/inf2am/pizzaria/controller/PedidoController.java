@@ -57,6 +57,13 @@ public class PedidoController {
 		return new ResponseEntity<>(criado, HttpStatus.CREATED);
     }
 
+
+    @GetMapping
+    public ResponseEntity<List<Pedido>> listarTodosPedido() {
+        List<Pedido> pedidos = pedidoService.listarTodosPedido();
+        return ResponseEntity.ok().body(pedidos);
+    }
+
     // Listar pedidos pelo email do solicitante
     @GetMapping("/email/{email}")
     public ResponseEntity<List<Pedido>> listarPedidosPorEmail(@PathVariable String email) {

@@ -1,5 +1,6 @@
 package com.itb.inf2am.pizzaria.service;
 
+import com.itb.inf2am.pizzaria.model.Doacao;
 import com.itb.inf2am.pizzaria.model.Pedido;
 import jakarta.transaction.Transactional;
 
@@ -13,6 +14,7 @@ public interface PedidoService {
 
     Pedido buscarPedidoPorId(Long id);
 
+    List<Pedido> listarTodosPedido();
 
     Pedido atualizarStatus(Long id, String novoStatus);
 

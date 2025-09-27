@@ -2,6 +2,7 @@ package com.itb.inf2am.pizzaria.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -37,13 +38,13 @@ public class Doacao {
     @Column(nullable = false, length = 255)
     private String email;
 
-    @JsonManagedReference
+    @JsonIgnoreProperties("doacoes")
     @ManyToOne
     @JoinColumn(name = "doadorid", nullable = false)
     private Cliente doador;
 
     @OneToMany(mappedBy = "iddoacao")
-    @JsonIgnore
+
     private List<Pedido> pedidos;
 
     @Transient

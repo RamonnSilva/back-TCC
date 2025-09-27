@@ -50,8 +50,9 @@ public class Cliente {
     private Integer logradouro;
 
 
-    @JsonBackReference
+
     @OneToMany(mappedBy = "doador")
+
     private List<Doacao> doacoes;
 
     @Transient

@@ -71,6 +71,13 @@ public class PedidoController {
         return new ResponseEntity<>(pedidos, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Pedido> atualizarPedido(
+            @PathVariable Long id,
+            @RequestBody Pedido pedidoAtualizado) {
+        Pedido pedido = pedidoService.atualizarPedido(pedidoAtualizado, id);
+        return ResponseEntity.ok(pedido);
+    }
     // Buscar pedido por ID
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> buscarPedidoPorId(@PathVariable Long id) {

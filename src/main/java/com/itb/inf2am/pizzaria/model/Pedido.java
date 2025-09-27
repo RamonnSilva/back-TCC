@@ -1,6 +1,7 @@
 package com.itb.inf2am.pizzaria.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public class Pedido {
 
     @ManyToOne
     @JoinColumn(name = "iddoacao", nullable = false)
+    @JsonIgnoreProperties("pedidos")
     private Doacao iddoacao;
 
     public Long getId() {

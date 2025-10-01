@@ -47,7 +47,7 @@ public class AuthController {
         }
 
         String token = tokenService.generateToken(cliente);
-        return ResponseEntity.ok(new ResponseDTO(cliente.getNome(), token, cliente.getFuncao()));
+        return ResponseEntity.ok(new ResponseDTO(cliente.getId(), cliente.getNome(), token, cliente.getFuncao()));
     }
 
     @PostMapping("/register")
@@ -67,7 +67,7 @@ public class AuthController {
         newCliente.setCep(body.cep());
         newCliente.setTelefone(body.telefone());
         newCliente.setEstado(body.estado());
-
+        newCliente.setCpf(body.cpf());
         newCliente.setCidade(body.cidade());
         newCliente.setEndereco(body.endereco());
         newCliente.setLogradouro(body.logradouro());
@@ -80,6 +80,6 @@ public class AuthController {
         repository.save(newCliente);
 
         String token = tokenService.generateToken(newCliente);
-        return ResponseEntity.ok(new ResponseDTO(newCliente.getNome(), token, newCliente.getFuncao()));
+        return ResponseEntity.ok(new ResponseDTO(newCliente.getId(), newCliente.getNome(), token, newCliente.getFuncao()));
     }
 }

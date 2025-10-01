@@ -36,7 +36,8 @@ public class Cliente {
     @Column(nullable = true, length = 2)
     private String estado;
 
-
+    @Column(nullable = true, length = 14)
+    private String cpf;
 
     @Column(nullable = true, length = 255)
     private String cidade;
@@ -145,6 +146,13 @@ public class Cliente {
         this.cidade = cidade;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 
     public String getFuncao() {
         return funcao;

@@ -9,9 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -26,63 +24,39 @@ public class DoacaoController {
         this.doacaoService = doacaoService;
     }
 
+    // Listar todas as doações
     @GetMapping
     public ResponseEntity<List<Doacao>> listarTodosDoacao() {
-        List<Doacao> doadores = doacaoService.listarTodosDoacao();
-        return ResponseEntity.ok().body(doadores);
+        List<Doacao> doacoes = doacaoService.listarTodosDoacao();
+        return ResponseEntity.ok(doacoes);
     }
 
+    // Listar doações de um usuário específico pelo email
     @GetMapping("/usuario")
     public List<Doacao> getDoacoesPorEmail(@RequestParam String email) {
         return doacaoService.listarDoacoesPorEmail(email);
     }
 
-
-    // Endpoint para receber doação com imagem em base64
-    @PostMapping("/base64")
-    public ResponseEntity<?> doarComImagemBase64(@RequestBody DoacaoRequest request) {
-        try {
-            if (request.getEmail() == null || request.getEmail().isEmpty()) {
-                return ResponseEntity.badRequest().body("O campo email é obrigatório.");
-            }
-
-            Doacao doacao = new Doacao();
-            doacao.setNome(request.getNome());
-            doacao.setTitulo(request.getTitulo());
-            doacao.setGenero(request.getGenero());
-            doacao.setAutor(request.getAutor());
-            doacao.setDescricao(request.getDescricao());
-            doacao.setEmail(request.getEmail());  // Setando o email
-
-            if (request.getImagem() != null && request.getImagem().contains(",")) {
-                String base64Imagem = request.getImagem().split(",")[1];
-                byte[] imagemBytes = Base64.getDecoder().decode(base64Imagem);
-                doacao.setImagem(imagemBytes);
-            }
-
-            Doacao novaDoacao = doacaoService.salvarDoacao(doacao);
-            return ResponseEntity.ok(novaDoacao);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao processar doação: " + e.getMessage());
-        }
-    }
-
+    // Criar doação recebendo imagem em Base64
     @PostMapping
     public ResponseEntity<?> criarDoacao(@RequestBody DoacaoRequest request) {
         try {
-            System.out.println("=== CRIANDO DOAÇÃO ===");
-            System.out.println("Request recebido: " + request);
-            System.out.println("Doadorid recebido: " + request.getDoadorid());
-            
-            // Validações básicas
             if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("O campo email é obrigatório.");
             }
-            
+
             if (request.getNome() == null || request.getNome().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("O campo nome é obrigatório.");
             }
 
+            if (request.getDoadorid() == null) {
+                return ResponseEntity.badRequest().body("O campo doadorid é obrigatório.");
+            }
+
+            // Buscar o doador pelo ID
+            Cliente doador = doacaoService.buscarClientePorId(request.getDoadorid());
+
+            // Criar doação
             Doacao doacao = new Doacao();
             doacao.setNome(request.getNome());
             doacao.setTitulo(request.getTitulo());
@@ -90,74 +64,64 @@ public class DoacaoController {
             doacao.setAutor(request.getAutor());
             doacao.setDescricao(request.getDescricao());
             doacao.setEmail(request.getEmail());
-
-            System.out.println("Doação criada: " + doacao);
-
-            // Validar se doadorid foi fornecido
-            if (request.getDoadorid() == null) {
-                return ResponseEntity.badRequest().body("O campo doadorid é obrigatório.");
-            }
-            
-            // Buscar o doador pelo ID
-            System.out.println("Buscando doador com ID: " + request.getDoadorid());
-            Cliente doador = doacaoService.buscarClientePorId(request.getDoadorid());
             doacao.setDoador(doador);
-            System.out.println("Doador encontrado: " + doador.getNome());
 
-            System.out.println("Salvando doação...");
+            // Processar imagem em Base64 se houver
+            if (request.getImagem() != null && !request.getImagem().isEmpty()) {
+                String base64Data = request.getImagem();
+                // Se tiver prefixo tipo "data:image/png;base64,", remove
+                if (base64Data.contains(",")) {
+                    base64Data = base64Data.split(",")[1];
+                }
+                byte[] imagemBytes = Base64.getDecoder().decode(base64Data);
+                doacao.setImagem(imagemBytes);
+            }
+
             Doacao novaDoacao = doacaoService.salvarDoacao(doacao);
-            System.out.println("Doação salva com sucesso! ID: " + novaDoacao.getId());
-            
-            return ResponseEntity.ok().body(novaDoacao);
+
+            return ResponseEntity.ok(novaDoacao);
         } catch (Exception e) {
-            System.out.println("=== ERRO AO CRIAR DOAÇÃO ===");
-            System.out.println("Erro: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro ao processar doação: " + e.getMessage());
         }
     }
 
+    // Buscar doação por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Doacao> listarDoacaoPorId(@PathVariable Integer id) {
+        Doacao doacao = doacaoService.listarDoacaoPorId(id);
+        if (doacao == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(doacao);
+    }
+
+    // Deletar doação
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarDoacao(@PathVariable String id) {
-        try {
-            int doacaoId = Integer.parseInt(id);
-            if (doacaoService.deletarDoacao(doacaoId)) {
-                return ResponseEntity.ok().body("Doação com o id " + id + " excluída com sucesso");
-            } else {
-                return ResponseEntity.status(404).body("Doação com o id " + id + " não encontrada");
-            }
-        } catch (NumberFormatException ex) {
-            throw new BadRequest("'" + id + "' não é um número inteiro válido. Por favor, forneça um valor inteiro.");
+    public ResponseEntity<?> deletarDoacao(@PathVariable Integer id) {
+        boolean deletado = doacaoService.deletarDoacao(id);
+        if (deletado) {
+            return ResponseEntity.ok("Doação com o id " + id + " excluída com sucesso.");
+        } else {
+            return ResponseEntity.status(404).body("Doação com o id " + id + " não encontrada.");
         }
     }
 
+    // Atualizar doação
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarDoacao(@RequestBody Doacao doacao, @PathVariable String id) {
+    public ResponseEntity<?> atualizarDoacao(@RequestBody Doacao doacao, @PathVariable Integer id) {
         try {
             if (doacao.getEmail() == null || doacao.getEmail().isEmpty()) {
                 return ResponseEntity.badRequest().body("O campo email é obrigatório.");
             }
-            int doacaoId = Integer.parseInt(id);
-            return ResponseEntity.ok().body(doacaoService.atualizarDoacao(doacao, doacaoId));
-        } catch (NumberFormatException ex) {
-            throw new BadRequest("'" + id + "' não é um número inteiro válido.");
+            Doacao atualizada = doacaoService.atualizarDoacao(doacao, id);
+            return ResponseEntity.ok(atualizada);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao atualizar doação: " + e.getMessage());
         }
     }
 
-    @PostMapping("/{id}/imagem")
-    public ResponseEntity<Doacao> uploadImagem(
-            @PathVariable Integer id,
-            @RequestParam("imagem") MultipartFile imagem) throws IOException {
-        Optional<Doacao> optionalDoacao = Optional.ofNullable(doacaoService.listarDoacaoPorId(id));
-        if (optionalDoacao.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Doacao doacao = optionalDoacao.get();
-        doacao.setImagem(imagem.getBytes());
-        Doacao salvo = doacaoService.salvarDoacao(doacao);
-        return ResponseEntity.ok(salvo);
-    }
-
+    // Endpoint para buscar imagem de doação
     @GetMapping("/{id}/imagem")
     public ResponseEntity<byte[]> getImagem(@PathVariable Integer id) {
         Doacao doacao = doacaoService.listarDoacaoPorId(id);

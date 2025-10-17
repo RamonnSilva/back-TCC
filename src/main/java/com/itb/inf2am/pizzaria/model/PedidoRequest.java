@@ -7,7 +7,7 @@ package com.itb.inf2am.pizzaria.model;
     private String autorLivro;
     private String generoLivro;
     private String descricaoLivro;
-    private String imagemLivroBase64; // Imagem em base64
+    private String imagemLivro; // Imagem em base64
     private String emailSolicitante;
     private String statusPedido;
     private Long idDoacao;
@@ -26,8 +26,8 @@ package com.itb.inf2am.pizzaria.model;
     public String getDescricaoLivro() { return descricaoLivro; }
     public void setDescricaoLivro(String descricaoLivro) { this.descricaoLivro = descricaoLivro; }
 
-    public String getImagemLivroBase64() { return imagemLivroBase64; }
-    public void setImagemLivroBase64(String imagemLivroBase64) { this.imagemLivroBase64 = imagemLivroBase64; }
+    public String getImagemLivro() { return imagemLivro; }
+    public void setImagemLivroBase64(String imagemLivro) { this.imagemLivro = imagemLivro; }
 
     public String getEmailSolicitante() { return emailSolicitante; }
     public void setEmailSolicitante(String emailSolicitante) { this.emailSolicitante = emailSolicitante; }

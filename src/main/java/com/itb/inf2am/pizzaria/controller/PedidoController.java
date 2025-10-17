@@ -41,8 +41,8 @@ public class PedidoController {
 		pedido.setStatusPedido(pedidoRequest.getStatusPedido());
 		pedido.setCorreios(pedidoRequest.getCorreios());
 
-		if (pedidoRequest.getImagemLivroBase64() != null && !pedidoRequest.getImagemLivroBase64().isEmpty()) {
-			byte[] imagem = Base64.getDecoder().decode(pedidoRequest.getImagemLivroBase64());
+		if (pedidoRequest.getImagemLivro() != null && !pedidoRequest.getImagemLivro().isEmpty()) {
+			byte[] imagem = Base64.getDecoder().decode(pedidoRequest.getImagemLivro());
 			pedido.setImagemLivro(imagem);
 		}
 
